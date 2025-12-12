@@ -1,14 +1,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Book } from '../types';
 
-// Initialize the Gemini client
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 export const getBookRecommendations = async (
   query: string, 
   currentCatalog: Book[]
 ): Promise<Book[]> => {
   try {
+    // Initialize lazily to prevent top-level crashes if process.env is not ready during module load
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const model = "gemini-2.5-flash";
     
     // We want the AI to suggest books. 

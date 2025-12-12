@@ -25,6 +25,10 @@
         background: #94a3b8;
       }
     </style>
+    <script>
+      // Polyfill process.env for browser compatibility
+      window.process = window.process || { env: { API_KEY: '' } };
+    </script>
   <script type="importmap">
 {
   "imports": {
