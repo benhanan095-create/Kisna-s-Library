@@ -50,6 +50,18 @@ const App: React.FC = () => {
     setIsCartOpen(true);
   };
 
+  const handleBuyNow = (book: Book) => {
+    // Add to cart if not present, then open checkout immediately
+    setCart(prev => {
+      const existing = prev.find(item => item.id === book.id);
+      if (existing) {
+        return prev; // Already in cart, just proceed to checkout
+      }
+      return [...prev, { ...book, quantity: 1 }];
+    });
+    setIsCheckoutOpen(true);
+  };
+
   const handleUpdateQuantity = (id: string, delta: number) => {
     setCart(prev => prev.map(item => {
       if (item.id === id) {
@@ -100,29 +112,31 @@ const App: React.FC = () => {
           onAddToCart={handleAddToCart}
           onViewDetails={handleViewDetails}
           onReadSample={handleReadSample}
+          onBuyNow={handleBuyNow}
         />
 
         {/* Main Catalog Header */}
         <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-slate-900 flex items-center">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-900 flex items-center">
                 <BookOpen className="h-6 w-6 mr-2 text-indigo-600" />
                 Featured Collection
             </h2>
-            <span className="text-sm text-slate-500 bg-white px-3 py-1 rounded-full border border-slate-200">
-                Showing {filteredCatalog.length} titles
+            <span className="text-xs md:text-sm text-slate-500 bg-white px-3 py-1 rounded-full border border-slate-200">
+                {filteredCatalog.length} titles
             </span>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {/* Grid - Updated for smaller cards */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {filteredCatalog.length > 0 ? (
-            filteredCatalog.slice(0, 24).map(book => (
+            filteredCatalog.slice(0, 30).map(book => (
               <BookCard 
                 key={book.id} 
                 book={book} 
                 onAddToCart={handleAddToCart}
                 onClick={handleViewDetails}
                 onReadSample={handleReadSample}
+                onBuyNow={handleBuyNow}
               />
             ))
           ) : (
@@ -133,7 +147,7 @@ const App: React.FC = () => {
           )}
         </div>
         
-        {filteredCatalog.length > 24 && (
+        {filteredCatalog.length > 30 && (
             <div className="mt-12 text-center">
                 <button className="px-8 py-3 bg-white border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition-colors shadow-sm">
                     Load More Titles
@@ -184,8 +198,8 @@ const App: React.FC = () => {
       {selectedBook && (
         <div className="fixed inset-0 z-[130] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={() => setSelectedBook(null)} />
-            <div className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden flex flex-col md:flex-row max-h-[90vh]">
-                 <button onClick={() => setSelectedBook(null)} className="absolute top-4 right-4 z-10 p-2 bg-white/80 rounded-full hover:bg-white text-slate-900 transition-all">
+            <div className="relative bg-white rounded-xl shadow-2xl max-w-4xl w-full overflow-hidden flex flex-col md:flex-row max-h-[90vh]">
+                 <button onClick={() => setSelectedBook(null)} className="absolute top-4 right-4 z-10 p-2 bg-white/80 rounded-full hover:bg-white text-slate-900 transition-all shadow-sm">
                     <AlertCircle className="h-6 w-6 rotate-45" />
                  </button>
 
@@ -193,30 +207,30 @@ const App: React.FC = () => {
                     <img src={selectedBook.coverUrl} className="w-full h-full object-cover" alt={selectedBook.title} />
                  </div>
                  
-                 <div className="w-full md:w-2/3 p-8 flex flex-col overflow-y-auto">
+                 <div className="w-full md:w-2/3 p-6 md:p-8 flex flex-col overflow-y-auto">
                     <div className="mb-auto">
                         <div className="flex items-center space-x-2 text-sm text-indigo-600 font-bold uppercase tracking-wider mb-2">
                              <span>{selectedBook.category}</span>
                              <span>•</span>
                              <span>{selectedBook.rating} ★</span>
                         </div>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-2">{selectedBook.title}</h2>
-                        <h3 className="text-xl text-slate-600 mb-6">{selectedBook.author}</h3>
+                        <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">{selectedBook.title}</h2>
+                        <h3 className="text-lg text-slate-600 mb-6">{selectedBook.author}</h3>
                         
                         <p className="text-slate-700 leading-relaxed mb-8">
                             {selectedBook.description}
                         </p>
                     </div>
 
-                    <div className="flex items-center justify-between pt-6 border-t border-slate-100 mt-6 gap-4">
+                    <div className="flex flex-col sm:flex-row items-center justify-between pt-6 border-t border-slate-100 mt-6 gap-4">
                         <div className="text-3xl font-bold text-slate-900">${selectedBook.price.toFixed(2)}</div>
-                        <div className="flex gap-3">
+                        <div className="flex gap-3 w-full sm:w-auto">
                            <button
                              onClick={() => {
                                handleReadSample(selectedBook);
-                               setSelectedBook(null); // Close details to open sample
+                               setSelectedBook(null);
                              }}
-                             className="px-6 py-3 border-2 border-indigo-600 text-indigo-600 font-bold rounded-lg hover:bg-indigo-50 transition-colors"
+                             className="flex-1 sm:flex-none px-4 py-3 border-2 border-indigo-600 text-indigo-600 font-bold rounded-lg hover:bg-indigo-50 transition-colors"
                            >
                              Read Sample
                            </button>
@@ -225,9 +239,18 @@ const App: React.FC = () => {
                                    handleAddToCart(selectedBook);
                                    setSelectedBook(null);
                                }}
-                               className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
+                               className="flex-1 sm:flex-none bg-indigo-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
                            >
                                Add to Cart
+                           </button>
+                           <button 
+                               onClick={() => {
+                                   handleBuyNow(selectedBook);
+                                   setSelectedBook(null);
+                               }}
+                               className="flex-1 sm:flex-none bg-emerald-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-emerald-700 transition-colors shadow-lg"
+                           >
+                               Buy Now
                            </button>
                         </div>
                     </div>

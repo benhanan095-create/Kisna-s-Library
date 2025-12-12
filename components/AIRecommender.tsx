@@ -9,9 +9,10 @@ interface AIRecommenderProps {
   onAddToCart: (book: Book) => void;
   onViewDetails: (book: Book) => void;
   onReadSample: (book: Book) => void;
+  onBuyNow: (book: Book) => void;
 }
 
-const AIRecommender: React.FC<AIRecommenderProps> = ({ catalog, onAddToCart, onViewDetails, onReadSample }) => {
+const AIRecommender: React.FC<AIRecommenderProps> = ({ catalog, onAddToCart, onViewDetails, onReadSample, onBuyNow }) => {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<Book[]>([]);
@@ -78,13 +79,13 @@ const AIRecommender: React.FC<AIRecommenderProps> = ({ catalog, onAddToCart, onV
           </div>
           
           {loading ? (
-             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[1,2,3,4].map(i => (
-                  <div key={i} className="h-96 bg-white rounded-xl animate-pulse"></div>
+             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {[1,2,3,4,5].map(i => (
+                  <div key={i} className="h-72 bg-white rounded-xl animate-pulse"></div>
                 ))}
              </div>
           ) : recommendations.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {recommendations.map((book) => (
                 <BookCard 
                   key={book.id} 
@@ -92,6 +93,7 @@ const AIRecommender: React.FC<AIRecommenderProps> = ({ catalog, onAddToCart, onV
                   onAddToCart={onAddToCart} 
                   onClick={onViewDetails}
                   onReadSample={onReadSample}
+                  onBuyNow={onBuyNow}
                 />
               ))}
             </div>
