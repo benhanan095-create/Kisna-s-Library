@@ -28,7 +28,7 @@ const Navbar: React.FC<NavbarProps> = ({
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center cursor-pointer group" onClick={onHomeClick}>
             <BookOpen className="h-8 w-8 text-indigo-600 group-hover:text-indigo-700 transition-colors" />
-            <span className="ml-2 text-xl font-bold text-slate-900 group-hover:text-indigo-900 transition-colors">Kisna's library</span>
+            <span className="ml-2 text-xl font-bold text-slate-900 group-hover:text-indigo-900 transition-colors">Ai Book Hub</span>
           </div>
 
           {/* Search Bar - Hidden on mobile, handled in sub-header or simple responsive layout */}
